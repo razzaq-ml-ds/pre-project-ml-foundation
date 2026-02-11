@@ -1,0 +1,4 @@
+customer_id,purchase_amount,purchase_date
+1,200,2024-01-01
+2,150,2024-01-03
+3,300,2024-01-05
