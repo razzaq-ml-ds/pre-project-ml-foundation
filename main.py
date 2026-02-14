@@ -33,6 +33,9 @@ def main():
     preprocessing_test = DataPreprocessor(X_test)
     X_test_cleaned = preprocessing_test.clean_data()
 
+    print("\nTarget Distribution:")
+    print(y_train.value_counts(normalize=True))
+
     print("X_train shape:", X_train_cleaned.shape)
     print("X_test shape:", X_test_cleaned.shape)
     print("y_train shape:", y_train.shape)
