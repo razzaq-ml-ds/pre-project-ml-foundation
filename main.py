@@ -3,6 +3,9 @@ from src.config_loader import load_config
 from src.logger import setup_logger
 from src.preprocessing import DataPreprocessor
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from src.model_training import Modeltrainer
+import pandas as pd
 import logging
 
 def main():
@@ -33,13 +36,25 @@ def main():
     preprocessing_test = DataPreprocessor(X_test)
     X_test_cleaned = preprocessing_test.clean_data()
 
-    print("\nTarget Distribution:")
-    print(y_train.value_counts(normalize=True))
+    # initialising scaler
+    scaler = StandardScaler()#what actually is a scaler 
 
-    print("X_train shape:", X_train_cleaned.shape)
-    print("X_test shape:", X_test_cleaned.shape)
-    print("y_train shape:", y_train.shape)
-    print("y_test shape:", y_test.shape)
+    # Fiting  only on training data
+    X_train_scaled = scaler.fit_transform(X_train_cleaned)
+
+    # Transform test data using same scaler
+    X_test_scaled = scaler.transform(X_test_cleaned)
+    
+    trainer = Modeltrainer()
+    trainer.train(X_train_scaled,y_train)#why scaled data is used btw
+
+    accuracy, report, matrix = trainer.evaluate(X_test_scaled, y_test)#i not even 1 % understood this line of code like we assigned these three a value then we again did evalution what is happing 
+    
+    print("\nModel Accuracy:", accuracy)
+    print("\nClassification Report:\n", report)
+    print("\nConfusion Matrix:\n", matrix)
+    
+    # so my doubt is what is happing in the code like should i run it now or i should first run it with scalling code when run again with model training code 
 
 if __name__ == "__main__":
     main()
