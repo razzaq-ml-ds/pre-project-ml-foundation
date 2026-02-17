@@ -18,7 +18,7 @@ def main():
     loader = CustomerDataLoader(config["data_path"])
     df = loader.load_data()
 
-    target_column = "Survived"
+    target_column = config["target_column"]
     X = df.drop(columns=[target_column])
     y = df[target_column]
 

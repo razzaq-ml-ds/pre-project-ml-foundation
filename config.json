@@ -1,3 +1,4 @@
 {
-    "data_path":"data/titanic.csv"
+    "data_path":"data/titanic.csv",
+    "target_column" : "Survived"
 }
