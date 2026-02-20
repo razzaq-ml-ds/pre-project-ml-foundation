@@ -1,4 +1,21 @@
 {
-    "data_path":"data/titanic.csv",
-    "target_column" : "Survived"
+  "data_path": "data/titanic.csv",
+  "target_column": "Survived",
+  "columns_to_drop": [
+    "PassengerId",
+    "Name",
+    "Ticket",
+    "Cabin"
+  ],
+  "categorical_columns": [
+    "Sex",
+    "Embarked"
+  ],
+  "numerical_columns_fill_strategy": {
+    "Age": "median",
+    "Fare": "mean"
+  },
+  "model": "logistic_regression",
+  "test_size": 0.2,
+  "random_state": 42
 }

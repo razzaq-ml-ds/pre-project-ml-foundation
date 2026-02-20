@@ -22,14 +22,14 @@ def main():
     X = df.drop(columns=[target_column])
     y = df[target_column]
 
-    X_train,X_test,y_train,y_test = train_test_split(
-        X,y,
-        test_size=0.2,
-        random_state=42
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y,
+        test_size=config["test_size"],
+        random_state=config["random_state"]
     )
-    logging.info(f"Train size: {len(X_train)}, Test size: {len(X_test)}")
+    logging.info(f"Train size: {len(X_train)} | Test size: {len(X_test)}")
 
-    preprocessor = DataPreprocessor()
+    preprocessor = DataPreprocessor(config)
     
     X_train_scaled = preprocessor.fit_transform(X_train)
 
