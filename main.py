@@ -13,6 +13,8 @@ def main():
 
         
     config = load_config("config.json")
+    logging.info("config loaded successfully")
+
 
     loader = CustomerDataLoader(config["data_path"])
     df = loader.load_data()
@@ -39,16 +41,18 @@ def main():
 
     trainer = Modeltrainer()
     trainer.train(X_train_scaled, y_train)
-    logging.info("Model training complete")
+    
 
     accuracy, report, matrix = trainer.evaluate(X_test_scaled, y_test)
-    logging.info(f"Model evaluated. Accuracy: {accuracy:.4f}")
+    
 
     print("\n" + "="*50)
     print(f"Model Accuracy: {accuracy:.4f}")
     print("\nClassification Report:\n", report)
     print("\nConfusion Matrix:\n", matrix)
     print("="*50)
+
+    trainer.save_model("models/model.pkl")
     
     
 if __name__ == "__main__":

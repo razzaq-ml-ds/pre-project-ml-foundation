@@ -5,7 +5,7 @@ class DataPreprocessor:
     def __init__(self,config):
         self.config = config
         self.scaler = StandardScaler()
-        self.columns_after_encoding = None
+        self.columns_after_encoding = None #
 
     
     def feature_engineering(self,df):
@@ -14,7 +14,7 @@ class DataPreprocessor:
 
         if "SibSp" in df.columns and "Parch" in df.columns:
             df["FamilySize"] = df["SibSp"] + df["Parch"] + 1
-            df["IsAlone"] = (df["FamilySize"]==1).astype(int)   
+            df["IsAlone"] = (df["FamilySize"]==1).astype(int)   #
 
         return df     
     
@@ -30,7 +30,7 @@ class DataPreprocessor:
 
         for column, strategy in fill_strategies.items():
             if column not in df.columns:
-                continue  # Skip silently if column doesn't exist in this dataset
+                continue  
 
             if strategy == "median":
                 df[column] = df[column].fillna(df[column].median())
@@ -76,8 +76,8 @@ class DataPreprocessor:
 
         if self.columns_after_encoding is None:
             raise RuntimeError(
-                "fit_transform() must be called on training data before transform(). "
-                "The scaler has not been fitted yet."
+                "fit_transform() must be called on training data before transform()"
+                "The scaler has not been fitted yet!"
             )
         
         df = self.feature_engineering(df)
