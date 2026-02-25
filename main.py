@@ -6,6 +6,8 @@ from sklearn.model_selection import train_test_split
 from src.model_training import Modeltrainer
 import pandas as pd
 import logging
+import os 
+import joblib
 
 def main():
     setup_logger()
@@ -54,6 +56,10 @@ def main():
 
     trainer.save_model("models/model.pkl")
     
+    os.makedirs("models", exist_ok=True)
+    joblib.dump(preprocessor,"models/preprocessor.pkl")
+    logging.info("preprocessor saved at models/preprocessor.pkl")
+    print("preprocessor saved at models/preprocessor.pkl")
     
 if __name__ == "__main__":
     main()
