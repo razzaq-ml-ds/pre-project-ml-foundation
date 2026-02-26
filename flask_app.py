@@ -1,8 +1,7 @@
 import joblib
-import numpy as np
 import pandas as pd 
 from flask import Flask, request, jsonify
-from sklearn.metrics import accuracy_score, classification_report,confusion_matrix
+
 
 app = Flask(__name__)
 
@@ -29,8 +28,6 @@ def predict():
             return jsonify({"error: no data provided!"}),400
         input_df = pd.DataFrame([data])
         input_scaled = preprocessor.transform(input_df)
-        print("input_scaled shape:", input_scaled.shape)
-        print("input_scaled value:", input_scaled)
         prediction = int(model.predict(input_scaled)[0])
         proba = model.predict_proba(input_scaled)
         probability = [float(proba[0][0]), float(proba[0][1])]

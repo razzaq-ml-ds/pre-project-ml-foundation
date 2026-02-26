@@ -30,7 +30,7 @@ class Modeltrainer:
         logging.info(f"model saved at {path}")
      
     def load_model(self,path):
-        if not os.path.exits(path):
+        if not os.path.exists(path):
             raise FileNotFoundError(
                 f"no saved model fount at {path}"
                 f"run main.py to train and save the model first"
