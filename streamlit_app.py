@@ -10,27 +10,21 @@ st.set_page_config(
 
 st.markdown("""
     <style>
-        .stApp { background-color: #0f172a; color: #e2e8f0; }
-
-        [data-testid="stSidebar"] { background-color: #1e293b; }
-
+        .stApp { background-color: #1c1c1c; color: #ffd700; }
+        [data-testid="stSidebar"] { background-color: #2c2c2c; }
         [data-testid="stMetric"] {
-            background: #1e293b;
-            border: 1px solid #334155;
+            background: #2c2c2c;
+            border: 1px solid #444444;
             border-radius: 12px;
             padding: 16px;
         }
-
-        [data-testid="stMetricValue"] { color: #38bdf8 !important; font-size: 2rem !important; }
-        [data-testid="stMetricLabel"] { color: #94a3b8 !important; }
-
-        p, label, .stMarkdown { color: #e2e8f0 !important; }
-
-        .stSelectbox > div, .stNumberInput > div { background: #1e293b !important; }
-
+        [data-testid="stMetricValue"] { color: #ffd700 !important; font-size: 2rem !important; }
+        [data-testid="stMetricLabel"] { color: #ffd700 !important; }
+        p, label, .stMarkdown { color: #ffd700 !important; }
+        .stSelectbox > div, .stNumberInput > div { background: #2c2c2c !important; }
         .stButton > button {
-            background: #38bdf8;
-            color: #0f172a;
+            background: #4285f4;
+            color: #ffd700;
             font-weight: 700;
             border: none;
             border-radius: 8px;
@@ -38,13 +32,16 @@ st.markdown("""
             padding: 12px;
             font-size: 1rem;
         }
-        .stButton > button:hover { background: #7dd3fc; color: #0f172a; }
-
-        h1 { color: #38bdf8 !important; }
-        h2, h3 { color: #e2e8f0 !important; }
-
-        hr { border-color: #334155; }
+        .stButton > button:hover { background: #5f9fff; color: #ffd700; }
+        h1 { color: #ffffff !important; }
+        h2, h3 { color: #ffd700 !important; font-size: 1.5rem; font-weight: bold; }
+        #ml-pipeline-dashboard { color: #ffffff; }
+        hr { border-color: #444444; }
     </style>
+
+
+
+
 """, unsafe_allow_html=True)
 
 FLASK_URL = "http://localhost:5000"
