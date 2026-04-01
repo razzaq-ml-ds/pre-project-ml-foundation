@@ -1,65 +1,23 @@
-from src.data_loader import CustomerDataLoader
-from src.config_loader import load_config
+from project_settings import PROJECT_CONFIG
+import logging 
+from src.data_loader import DataLoader
 from src.logger import setup_logger
-from src.preprocessing import DataPreprocessor
-from sklearn.model_selection import train_test_split
-from src.model_training import Modeltrainer
-import pandas as pd
-import logging
-import os 
-import joblib
-# skills learned now we will rebuild from here
+
 def main():
     setup_logger()
-    logging.info('Project started')
+    logging.info("project started!")
 
-        
-    config = load_config("config.json")
-    logging.info("config loaded successfully")
+    config = PROJECT_CONFIG
 
+    file_path = config["data"]["path"]
 
-    loader = CustomerDataLoader(config["data_path"])
+    loader = DataLoader(file_path)
     df = loader.load_data()
-    logging.info(f"Data loaded successfully. Shape: {df.shape}")
 
-    target_column = config["target_column"]
-    X = df.drop(columns=[target_column])
-    y = df[target_column]
+    print(df.shape)
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y,
-        test_size=config["test_size"],
-        random_state=config["random_state"]
-    )
-    logging.info(f"Train size: {len(X_train)} | Test size: {len(X_test)}")
+    logging.info(f"dataset loaded successfully with shape {df.shape}")
 
-    preprocessor = DataPreprocessor(config)
-    
-    X_train_scaled = preprocessor.fit_transform(X_train)
 
-    X_test_scaled = preprocessor.transform(X_test)
-
-    logging.info("Preprocessing complete")
-
-    trainer = Modeltrainer()
-    trainer.train(X_train_scaled, y_train)
-    
-
-    accuracy, report, matrix = trainer.evaluate(X_test_scaled, y_test)
-    
-
-    print("\n" + "="*50)
-    print(f"Model Accuracy: {accuracy:.4f}")
-    print("\nClassification Report:\n", report)
-    print("\nConfusion Matrix:\n", matrix)
-    print("="*50)
-
-    trainer.save_model("models/model.pkl")
-    
-    os.makedirs("models", exist_ok=True)
-    joblib.dump(preprocessor,"models/preprocessor.pkl")
-    logging.info("preprocessor saved at models/preprocessor.pkl")
-    print("preprocessor saved at models/preprocessor.pkl")
-    
 if __name__ == "__main__":
     main()

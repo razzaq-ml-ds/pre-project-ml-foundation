@@ -1,24 +1,17 @@
-import csv
-import pandas as pd 
-class CustomerDataLoader:
+import pandas as pd
+from pathlib import Path
 
+class DataLoader:
     def __init__(self,file_path):
         self.file_path = file_path
-
     def load_data(self):
-        try:
-            df = pd.read_csv(self.file_path)
-            return df
-        except FileNotFoundError:
-            raise FileNotFoundError("the specified file was not found!")
+        path = Path(self.file_path)
+
+        if not path.exists():
+            raise FileNotFoundError(f"file not found: {self.file_path}")
+        
+        return pd.read_csv(path)
 
         
-    def validate_columns(self,required_columns):
-        df = self.load_data()
-        
 
-        for col in required_columns:
-            if col not in df.columns:
-                raise ValueError(f"missing required column:{col}")
-            
-        return True
+

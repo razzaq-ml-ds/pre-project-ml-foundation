@@ -1,11 +1,14 @@
+from pathlib import Path
 import logging
-import os
+
 
 def setup_logger():
-    os.makedirs("logs",exist_ok=True)
+    log_dir = Path("logs")
+    log_dir.mkdir(exist_ok=True)
 
     logging.basicConfig(
-        filename="logs/app.log",
+        filename=log_dir / "app.log",
         level=logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(message)s" 
+        format="%(asctime)s - %(levelname)s - %(message)s"
     )
+
