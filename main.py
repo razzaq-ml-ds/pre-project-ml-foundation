@@ -8,7 +8,7 @@ import pandas as pd
 import logging
 import os 
 import joblib
-
+# skills learned now we will rebuild from here
 def main():
     setup_logger()
     logging.info('Project started')
