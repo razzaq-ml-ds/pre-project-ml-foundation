@@ -4,6 +4,9 @@ from src.data_loader import DataLoader
 from src.logger import setup_logger
 from src.preprocessing import DataPreprocessor
 from sklearn.model_selection import train_test_split
+from src.model_training import ModelTrainer
+import joblib
+from pathlib import Path
 
 def main():
     setup_logger()
@@ -31,8 +34,18 @@ def main():
     X_train_preprocessed = preprocessor.fit_transform(X_train)
     X_test_preprocessed = preprocessor.transform(X_test)
 
-    print(f"training data shape: {X_train_preprocessed.shape}")
-    print(f"testing data shape: {X_test_preprocessed.shape}")
+    model_trainer = ModelTrainer(config)
+    model_trainer.train_model(X_train_preprocessed,y_train)
+
+    metrics = model_trainer.evaluate_model(X_test_preprocessed ,y_test)
+
+    print(f"metrics of the model:{metrics}")
+    logging.info(f"metrics of the model:{metrics}")
+
+    model_trainer.save_model("models/model.pkl")
+    Path("models").mkdir(exist_ok=True)
+
+    joblib.dump(preprocessor, "models/preprocessor.pkl")
 
 
 if __name__ == "__main__":
