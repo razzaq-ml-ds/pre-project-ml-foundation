@@ -1,18 +1,20 @@
 import joblib
 from sklearn.linear_model import LogisticRegression
 from pathlib import Path
-from sklearn.metrics import accuracy_score,precision_score,recall_score,f1_score
+from sklearn.metrics import accuracy_score,precision_score,recall_score,f1_score,roc_auc_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 import json
+from sklearn.ensemble import GradientBoostingClassifier
 
 class ModelTrainer():
     def __init__(self,config):
         self.config = config
         self.models = {
-            "Logistic Regression":LogisticRegression(max_iter=1000),
-            "Random Forest":RandomForestClassifier(),
-            "Decision Tree":DecisionTreeClassifier()
+            "Logistic Regression":LogisticRegression(max_iter=1000, class_weight='balanced'),
+            "Random Forest":RandomForestClassifier(n_estimators=200, class_weight='balanced'),
+            "Decision Tree":DecisionTreeClassifier(),
+            "Gradient Boosting": GradientBoostingClassifier()
         }
         self.best_model = None
         self.best_model_name = None
@@ -41,12 +43,15 @@ class ModelTrainer():
 
     def evaluate_model(self,model,X_test,y_test):
         y_pred = model.predict(X_test)
+        y_prob = model.predict_proba(X_test)[:,1]
 
+    
         metrics = {
             "accuracy":accuracy_score(y_test,y_pred),
             "precision":precision_score(y_test,y_pred,zero_division=0),
             "recall":recall_score(y_test,y_pred,zero_division=0),
-            "f1_score":f1_score(y_test,y_pred,zero_division=0)
+            "f1_score":f1_score(y_test,y_pred,zero_division=0),
+            "roc_auc": roc_auc_score(y_test, y_prob)
         }
 
         return metrics
