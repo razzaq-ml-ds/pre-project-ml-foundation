@@ -35,15 +35,25 @@ def main():
     X_test_preprocessed = preprocessor.transform(X_test)
 
     model_trainer = ModelTrainer(config)
-    model_trainer.train_model(X_train_preprocessed,y_train)
+    results,best_result  = model_trainer.train_and_compare(
+        X_train_preprocessed,
+        y_train,
+        X_test_preprocessed,
+        y_test
+    )
 
-    metrics = model_trainer.evaluate_model(X_test_preprocessed ,y_test)
 
-    print(f"metrics of the model:{metrics}")
-    logging.info(f"metrics of the model:{metrics}")
+    print(f"all models resultss: {results}")
+    print(f"the result of the best model: {best_result}")
+
+
+    logging.info(f"all models resuls: {results}")
+    logging.info(f"the result of the best model: {best_result}")
+
+    Path("models").mkdir(exist_ok=True)
 
     model_trainer.save_model("models/model.pkl")
-    Path("models").mkdir(exist_ok=True)
+    model_trainer.save_experiment_results("models/experiment_results.json",results,best_result)
 
     joblib.dump(preprocessor, "models/preprocessor.pkl")
 
