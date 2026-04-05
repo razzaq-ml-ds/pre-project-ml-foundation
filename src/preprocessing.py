@@ -15,6 +15,15 @@ class DataPreprocessor:
 
         numerical_col = self.config["features"]['numerical_columns']
         categorical_col = self.config["features"]["categorical_columns"]
+
+        df["HasBalance"] = (df["Balance"] > 0).astype(int)
+        df["IsAge50To60"] = ((df["Age"] > 50) & (df["Age"] <= 60)).astype(int)
+        df["HasTwoProducts"] = (df["Num Of Products"] == 2).astype(int)
+        df["HasThreePlusProducts"] = (df["Num Of Products"] >= 3).astype(int)
+
+        
+            
+    
         # filling the missing values
         for col in numerical_col:
             if col in df.columns:
