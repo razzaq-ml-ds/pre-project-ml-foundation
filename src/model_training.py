@@ -7,14 +7,38 @@ from sklearn.tree import DecisionTreeClassifier
 import json
 from sklearn.ensemble import GradientBoostingClassifier
 
+
 class ModelTrainer():
     def __init__(self,config):
         self.config = config
         self.models = {
-            "Logistic Regression":LogisticRegression(max_iter=1000, class_weight='balanced'),
-            "Random Forest":RandomForestClassifier(n_estimators=200, class_weight='balanced'),
-            "Decision Tree":DecisionTreeClassifier(),
-            "Gradient Boosting": GradientBoostingClassifier()
+            "Logistic Regression":LogisticRegression(
+                max_iter=1000,
+                class_weight='balanced',
+                C=0.1,
+                ),
+            "Random Forest":RandomForestClassifier(
+                n_estimators=500,
+                class_weight='balanced',
+                max_depth=None,
+                min_samples_leaf=5,
+                max_features=0.4,
+                min_samples_split=10,
+                random_state=42
+                ),
+            "Decision Tree":DecisionTreeClassifier(
+                max_depth=4,
+                min_samples_leaf=30,
+                class_weight="balanced",
+                ),
+            "Gradient Boosting": GradientBoostingClassifier(
+                n_estimators=500,
+                learning_rate=0.05,      
+                max_depth=4,             
+                subsample=0.8,           
+                min_samples_leaf=15,      
+                random_state=42,
+            )
         }
         self.best_model = None
         self.best_model_name = None
@@ -25,7 +49,8 @@ class ModelTrainer():
         
         for model_name,model in self.models.items():
             model.fit(X_train,
-                      y_train)
+                      y_train,
+                      )
             metrics = self.evaluate_model(model,X_test,y_test)
             metrics["model_name"] = model_name
             results.append(metrics)
