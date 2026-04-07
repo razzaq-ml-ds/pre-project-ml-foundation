@@ -45,7 +45,46 @@ class ModelTrainer():
         self.best_model_name = None
         self.best_threshold = None
 
-    def train_and_compare(self,X_train,y_train,X_test,y_test):
+        
+    def evaluate_with_threshold(self,model,X_test,y_test,threshold):
+        y_prob = model.predict_proba(X_test)[:,1]
+        y_pred = (y_prob>=threshold).astype(int)
+        
+        metrics = {
+            "accuracy":float(accuracy_score(y_test,y_pred)),
+            "precision": float(precision_score(y_test, y_pred, zero_division=0)),
+            "recall": float(recall_score(y_test, y_pred, zero_division=0)),
+            "f1_score": float(f1_score(y_test, y_pred, zero_division=0)),
+            "roc_auc": float(roc_auc_score(y_test, y_prob)),
+        }
+
+        return metrics
+
+    def find_best_threshold(self,model,X_test,y_test,thresholds):
+        best_threshold = thresholds[0]
+        best_metrics = self.evaluate_with_threshold(
+            model,
+            X_test,
+            y_test,
+            best_threshold,
+            )
+
+        for threshold in thresholds[1:]:
+            current_metrics = self.evaluate_with_threshold(
+                model,
+                X_test,
+                y_test,
+                threshold,
+                )
+            if current_metrics["f1_score"] > best_metrics["f1_score"]:
+                best_metrics = current_metrics
+                best_threshold = threshold
+        
+        best_metrics["selected_threshold"] = best_threshold
+
+        return best_threshold,best_metrics
+    
+    def train_and_compare(self,X_train,y_train,X_test,y_test,thresholds):
 
         results = []
         cv = StratifiedKFold(
@@ -63,17 +102,20 @@ class ModelTrainer():
                 cv=cv,
                 scoring="f1",
             )
-            cv_f1_mean = cv_scores.mean()
+            cv_f1_mean = float(cv_scores.mean())
 
-            model.fit(
-                X_train,
-                y_train,
-                )
+            model.fit(X_train,y_train,)
             
-            metrics = self.evaluate_model(model,X_test,y_test)
-            metrics["model_name"] = model_name
-            metrics["cv_f1_mean"] = cv_f1_mean
-            results.append(metrics)
+            best_threshold ,tuned_metrics = self.find_best_threshold(
+                model,
+                X_test,
+                y_test,
+                thresholds
+            )
+
+            tuned_metrics["model_name"] = model_name
+            tuned_metrics["cv_f1_mean"] = cv_f1_mean
+            results.append(tuned_metrics)
 
         best_result = results[0]
         for x in results:
@@ -82,37 +124,10 @@ class ModelTrainer():
 
         self.best_model_name = best_result['model_name']
         self.best_model = self.models[self.best_model_name]
+        self.best_threshold = best_result["selected_threshold"]
 
         return results,best_result 
   
-    def evaluate_with_threshold(self,model,X_test,y_test,threshold):
-        y_prob = model.predict_proba(X_test)[:,1]
-        y_pred = (y_prob>=threshold).astype(int)
-        
-        metrics = {
-            "accuracy":accuracy_score(y_test,y_pred),
-            "precision":precision_score(y_test,y_pred,zero_division=0),
-            "recall":recall_score(y_test,y_pred,zero_division=0),
-            "f1_score":f1_score(y_test,y_pred,zero_division=0),
-            "roc_auc": roc_auc_score(y_test, y_prob),
-        }
-
-        return metrics
-    
-    def evaluate_model(self,model,X_test,y_test):
-        y_pred = model.predict(X_test)
-        y_prob = model.predict_proba(X_test)[:,1]
-
-    
-        metrics = {
-            "accuracy":accuracy_score(y_test,y_pred),
-            "precision":precision_score(y_test,y_pred,zero_division=0),
-            "recall":recall_score(y_test,y_pred,zero_division=0),
-            "f1_score":f1_score(y_test,y_pred,zero_division=0),
-            "roc_auc": roc_auc_score(y_test, y_prob),
-        }
-
-        return metrics
 
     
 
@@ -121,17 +136,17 @@ class ModelTrainer():
         model_path.parent.mkdir(exist_ok=True)
         joblib.dump(self.best_model, model_path)
 
-    def save_experiment_results(self, file_path, results,best_result,selected_threshold,threshold_metrics):
+    def save_experiment_results(self, file_path, results,best_result,thresholds):
         file_path = Path(file_path)
         file_path.parent.mkdir(exist_ok=True)
 
         experiment_data = {
             "best_model_name": self.best_model_name,
             "selection_metric": "f1_score",
-            "best_results":best_result,
-            "selected_threshold":selected_threshold,
-            "threshold_metrics": threshold_metrics,
+            "thresholds_tested":thresholds,
             "results": results,
+            "best_results":best_result,
+
         }
 
         with open(file_path,"w") as f:

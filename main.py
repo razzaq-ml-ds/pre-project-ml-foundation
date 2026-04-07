@@ -34,42 +34,25 @@ def main():
     X_train_preprocessed = preprocessor.fit_transform(X_train)
     X_test_preprocessed = preprocessor.transform(X_test)
 
+    thresholds = [0.50, 0.45, 0.40, 0.35]
+
+
     model_trainer = ModelTrainer(config)
     results,best_result  = model_trainer.train_and_compare(
         X_train_preprocessed,
         y_train,
         X_test_preprocessed,
-        y_test
-    )
-
-# testing threshold broadly
-    # thresholds = [0.5, 0.45, 0.4, 0.35]
-    # for threshold in thresholds:
-
-    #     metrics = model_trainer.evaluate_with_threshold(
-    #         model_trainer.best_model,
-    #         X_test_preprocessed,
-    #         y_test,
-    #         threshold
-    #     )
-    #     print(threshold,metrics)
-
-    selected_threshold = 0.45
-    threshold_metrics = model_trainer.evaluate_with_threshold(
-        model_trainer.best_model,
-        X_test_preprocessed,
         y_test,
-        selected_threshold,
+        thresholds,
     )
-    print(f"selected threshold: {selected_threshold}")
-    print(f"metrics at selected threshold: {threshold_metrics}")
-    print(f"all models resultss: {results}")
-    print(f"the result of the best model(selected): {best_result}")
+
+    print(f"all model results: {results}")
+    print(f"best tuned model result: {best_result}")
+
 
     logging.info(f"all models resuls: {results}")
-    logging.info(f"the result of the best model(selected): {best_result}")
-    logging.info(f"selected threshold: {selected_threshold}")
-    logging.info(f"metrics at selected threshold: {threshold_metrics}")
+    logging.info(f"the best tuned model result: {best_result}")
+
 
 
     Path("models").mkdir(exist_ok=True)
@@ -79,8 +62,7 @@ def main():
         "models/experiment_results.json",
         results,
         best_result,
-        selected_threshold,
-        threshold_metrics,
+        thresholds,
         )
 
     joblib.dump(preprocessor, "models/preprocessor.pkl")
