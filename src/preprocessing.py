@@ -20,10 +20,12 @@ class DataPreprocessor:
         df["IsAge50To60"] = ((df["Age"] > 50) & (df["Age"] <= 60)).astype(int)
         df["HasTwoProducts"] = (df["Num Of Products"] == 2).astype(int)
         df["HasThreePlusProducts"] = (df["Num Of Products"] >= 3).astype(int)
+        # combining label to make one feature 
+        df["InactivewithBalance"] = ((df["Is Active Member"] == 0 ) & (df["Balance"]>0)).astype(int)
+        df["GermanyCustomer"] = (df["Geography"]=="Germany").astype(int)
+        df["OneProductCustomer"] = (df["Num Of Products"] == 1).astype(int)
 
-        
             
-    
         # filling the missing values
         for col in numerical_col:
             if col in df.columns:

@@ -42,18 +42,46 @@ def main():
         y_test
     )
 
+# testing threshold broadly
+    # thresholds = [0.5, 0.45, 0.4, 0.35]
+    # for threshold in thresholds:
 
+    #     metrics = model_trainer.evaluate_with_threshold(
+    #         model_trainer.best_model,
+    #         X_test_preprocessed,
+    #         y_test,
+    #         threshold
+    #     )
+    #     print(threshold,metrics)
+
+    selected_threshold = 0.45
+    threshold_metrics = model_trainer.evaluate_with_threshold(
+        model_trainer.best_model,
+        X_test_preprocessed,
+        y_test,
+        selected_threshold,
+    )
+    print(f"selected threshold: {selected_threshold}")
+    print(f"metrics at selected threshold: {threshold_metrics}")
     print(f"all models resultss: {results}")
-    print(f"the result of the best model: {best_result}")
-
+    print(f"the result of the best model(selected): {best_result}")
 
     logging.info(f"all models resuls: {results}")
-    logging.info(f"the result of the best model: {best_result}")
+    logging.info(f"the result of the best model(selected): {best_result}")
+    logging.info(f"selected threshold: {selected_threshold}")
+    logging.info(f"metrics at selected threshold: {threshold_metrics}")
+
 
     Path("models").mkdir(exist_ok=True)
 
     model_trainer.save_model("models/model.pkl")
-    model_trainer.save_experiment_results("models/experiment_results.json",results,best_result)
+    model_trainer.save_experiment_results(
+        "models/experiment_results.json",
+        results,
+        best_result,
+        selected_threshold,
+        threshold_metrics,
+        )
 
     joblib.dump(preprocessor, "models/preprocessor.pkl")
 
