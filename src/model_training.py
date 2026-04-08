@@ -7,18 +7,29 @@ from sklearn.tree import DecisionTreeClassifier
 import json
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import StratifiedKFold,cross_val_score
+from sklearn.ensemble import ExtraTreesClassifier, AdaBoostClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.tree import DecisionTreeClassifier
+
 
 
 class ModelTrainer():
     def __init__(self,config):
         self.config = config
         self.models = {
-            "Logistic Regression":LogisticRegression(
-                max_iter=1000,
-                class_weight='balanced',
-                C=0.1,
+
+
+            "Extra_trees":ExtraTreesClassifier(
+                n_estimators=500,
+                class_weight={0: 1, 1: 2},
+                max_depth=25,
+                min_samples_leaf=2,
+                max_features=0.35,
+                min_samples_split=10,
+                random_state=42
             ),
-            "Random Forest":RandomForestClassifier(
+
+            "Random_Forest":RandomForestClassifier(
                 n_estimators=500,
                 class_weight='balanced',
                 max_depth=None,
@@ -27,12 +38,8 @@ class ModelTrainer():
                 min_samples_split=10,
                 random_state=42
             ),
-            "Decision Tree":DecisionTreeClassifier(
-                max_depth=4,
-                min_samples_leaf=30,
-                class_weight="balanced",
-            ),
-            "Gradient Boosting": GradientBoostingClassifier(
+
+            "Gradient_Boosting": GradientBoostingClassifier(
                 n_estimators=500,
                 learning_rate=0.05,      
                 max_depth=4,             
