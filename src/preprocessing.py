@@ -24,7 +24,9 @@ class DataPreprocessor:
         df["InactivewithBalance"] = ((df["Is Active Member"] == 0 ) & (df["Balance"]>0)).astype(int)
         df["GermanyCustomer"] = (df["Geography"]=="Germany").astype(int)
         df["OneProductCustomer"] = (df["Num Of Products"] == 1).astype(int)
-
+        df["BalanceSalaryRatio"] = df["Balance"] / (df["Estimated Salary"] + 1)
+        df["TenureByAge"] = df["Tenure"] / (df["Age"] + 1)
+        df["CreditScoreBucket"] = pd.cut(df["CreditScore"], bins=5, labels=False)
             
         # filling the missing values
         for col in numerical_col:

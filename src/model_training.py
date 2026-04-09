@@ -7,46 +7,88 @@ from sklearn.tree import DecisionTreeClassifier
 import json
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import StratifiedKFold,cross_val_score
-from sklearn.ensemble import ExtraTreesClassifier, AdaBoostClassifier
-from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.tree import DecisionTreeClassifier
-
-
-
+from sklearn.ensemble import BaggingClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import confusion_matrix, classification_report
+from catboost import CatBoostClassifier
 class ModelTrainer():
     def __init__(self,config):
         self.config = config
         self.models = {
 
+            "catboost":CatBoostClassifier(
+
+                    iterations=800,
+                    learning_rate=0.009, 
+                    depth=6,
+                    l2_leaf_reg=6,          
+                    scale_pos_weight=2.2,     
+                    border_count=254,         
+                    verbose=0
+                ),
+
+
+            # "KNN": KNeighborsClassifier(
+            #         n_neighbors=11,
+            #         weights="distance",
+            #     ),
+
+            # "HistGradientBoosting": HistGradientBoostingClassifier(
+            #     max_depth=8,
+            #     learning_rate=0.03,
+            #     max_iter=500,
+            #     random_state=42,
+            #     min_samples_leaf=5,
+            #     l2_regularization=1.0,
+            # ),
 
             "Extra_trees":ExtraTreesClassifier(
                 n_estimators=500,
                 class_weight={0: 1, 1: 2},
                 max_depth=25,
-                min_samples_leaf=2,
-                max_features=0.35,
+                min_samples_leaf=1,
+                max_features=0.45,
                 min_samples_split=10,
-                random_state=42
+                random_state=42,
+                n_jobs=-1,
             ),
 
             "Random_Forest":RandomForestClassifier(
-                n_estimators=500,
+                n_estimators=400,
                 class_weight='balanced',
-                max_depth=None,
-                min_samples_leaf=5,
+                max_depth=10,
+                min_samples_leaf=3,
                 max_features=0.4,
                 min_samples_split=10,
                 random_state=42
             ),
 
+
             "Gradient_Boosting": GradientBoostingClassifier(
-                n_estimators=500,
-                learning_rate=0.05,      
+                n_estimators=600,
+                learning_rate=0.009,      
                 max_depth=4,             
-                subsample=0.8,           
-                min_samples_leaf=15,      
+                subsample=1.0,           
+                min_samples_leaf=3,      
                 random_state=42,
+                
+            ),
+
+            "model":LogisticRegression(
+                penalty='l2',          
+                C=0.5,                 
+                solver='saga', 
+                l1_ratio=0.5,    
+                max_iter=2000,          
+                class_weight=None,      
+                random_state=42
             )
+
+
+
         }
         self.best_model = None
         self.best_model_name = None
@@ -76,17 +118,18 @@ class ModelTrainer():
             best_threshold,
             )
 
-        for threshold in thresholds[1:]:
+        target_recall = 0.75
+
+        for threshold in thresholds:
             current_metrics = self.evaluate_with_threshold(
-                model,
-                X_test,
-                y_test,
-                threshold,
-                )
-            if current_metrics["f1_score"] > best_metrics["f1_score"]:
-                best_metrics = current_metrics
-                best_threshold = threshold
-        
+                model, X_test, y_test, threshold
+            )
+
+            if current_metrics["recall"] >= target_recall:
+                if current_metrics["precision"] > best_metrics.get("precision", 0):
+                    best_metrics = current_metrics
+                    best_threshold = threshold
+                
         best_metrics["selected_threshold"] = best_threshold
 
         return best_threshold,best_metrics

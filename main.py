@@ -33,8 +33,7 @@ def main():
     preprocessor = DataPreprocessor(config)
     X_train_preprocessed = preprocessor.fit_transform(X_train)
     X_test_preprocessed = preprocessor.transform(X_test)
-
-    thresholds = [0.50, 0.45, 0.40, 0.35]
+    thresholds = [i/100 for i in range(5, 60, 1)]
 
 
     model_trainer = ModelTrainer(config)
