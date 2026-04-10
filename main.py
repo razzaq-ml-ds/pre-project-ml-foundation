@@ -31,8 +31,9 @@ def main():
     )
 
     preprocessor = DataPreprocessor(config)
-    X_train_preprocessed = preprocessor.fit_transform(X_train)
+    X_train_preprocessed = preprocessor.fit_transform(X_train) 
     X_test_preprocessed = preprocessor.transform(X_test)
+    
     thresholds = [i/100 for i in range(5, 60, 1)]
 
 
@@ -43,6 +44,13 @@ def main():
         X_test_preprocessed,
         y_test,
         thresholds,
+    )
+
+    confu_matrix = model_trainer.get_confusion_matrix(
+        model_trainer.best_model,
+        X_test_preprocessed,
+        y_test,
+        model_trainer.best_threshold
     )
 
     print(f"all model results: {results}")
@@ -62,6 +70,7 @@ def main():
         results,
         best_result,
         thresholds,
+        confu_matrix,
         )
 
     joblib.dump(preprocessor, "models/preprocessor.pkl")
