@@ -2,6 +2,5 @@ __pycache__/
 *.pyc
 logs/
 venv/
-models/
 testing.py
 catboost_info/
