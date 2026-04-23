@@ -282,7 +282,7 @@ Add your deployed Streamlit link here after deployment.
 Example:
 
 ```md
-[Live App](https://your-app-name.streamlit.app/)
+[Live App](https://churncheck-ml-system.streamlit.app/)
 ```
 
 ---
@@ -319,4 +319,4 @@ That makes it a strong starting point for future end-to-end ML projects.
 
 ## Author
 
-Built by Razza as part of a hands-on machine learning engineering journey.
+Built by  Abdul Razzaq as part of a hands-on machine learning engineering journey.
